@@ -7,21 +7,33 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.aplicacion_tiempo.AplicacionControlador">
    <children>
-      <VBox alignment="TOP_CENTER" layoutX="142.0" layoutY="69.0" prefHeight="450.0" prefWidth="450.0" spacing="10.0" AnchorPane.bottomAnchor="68.60000000000002" AnchorPane.leftAnchor="142.0" AnchorPane.rightAnchor="142.0" AnchorPane.topAnchor="69.0">
+      <VBox alignment="CENTER" layoutX="142.0" layoutY="69.0" prefHeight="450.0" prefWidth="450.0" spacing="20.0" AnchorPane.bottomAnchor="68.60000000000002" AnchorPane.leftAnchor="142.0" AnchorPane.rightAnchor="142.0" AnchorPane.topAnchor="69.0">
          <children>
             <Label text="APP DE TIEMPO">
                <font>
                   <Font name="System Bold" size="21.0" />
                </font>
             </Label>
-            <TextField prefHeight="26.0" prefWidth="207.0" promptText="Ingrese el nombre de una ciudad" />
-            <Button mnemonicParsing="false" text="Buscar" />
-            <Label text="Temperatura" />
-            <Label text="Descripcion" />
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <TextField fx:id="txtCiudad" prefHeight="26.0" prefWidth="207.0" promptText="Ingrese el nombre de una ciudad" />
+            <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#onConsultarClick" text="Buscar" />
+            <Label fx:id="lblTemp" text="Temperatura">
+               <font>
+                  <Font name="System Bold Italic" size="12.0" />
+               </font></Label>
+            <Label fx:id="lblDescripcion" text="Descripcion">
+               <font>
+                  <Font name="System Bold Italic" size="12.0" />
+               </font></Label>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
-                  <Label alignment="CENTER" text="Humedad" />
-                  <Label nodeOrientation="LEFT_TO_RIGHT" text="Viento" />
+                  <Label fx:id="lblHumedad" alignment="CENTER" text="Humedad">
+                     <font>
+                        <Font name="System Bold Italic" size="12.0" />
+                     </font></Label>
+                  <Label fx:id="lblViento" nodeOrientation="LEFT_TO_RIGHT" text="Viento">
+                     <font>
+                        <Font name="System Bold Italic" size="12.0" />
+                     </font></Label>
                </children>
             </HBox>
          </children>
