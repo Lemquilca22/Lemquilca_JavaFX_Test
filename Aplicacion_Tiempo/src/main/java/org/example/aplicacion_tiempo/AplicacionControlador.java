@@ -43,7 +43,7 @@ public class AplicacionControlador {
 
                 double lat = extraerDato(geoJson, "\"latitude\":");
                 double lon = extraerDato(geoJson, "\"longitude\":");
-                
+
                 String weatherUrl = "https://api.open-meteo.com/v1/forecast?latitude=" + lat
                         + "&longitude=" + lon
                         + "&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&timezone=auto";
