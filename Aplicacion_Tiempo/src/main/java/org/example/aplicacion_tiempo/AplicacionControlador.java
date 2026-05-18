@@ -32,7 +32,8 @@ public class AplicacionControlador {
 
         lblDescripcion.setText("Buscando...");
 
-        CompletableFuture.runAsync(() -> {
+
+        CompletableFuture.runAsync(() -> { //Esto sirve para que toda la logica de decision se procese sin afectar la interfaz gráfica
             try {
                 String geoUrl = "https://geocoding-api.open-meteo.com/v1/search?name="
                         + ciudad.replace(" ", "%20") + "&count=1&language=es&format=json";
@@ -41,12 +42,13 @@ public class AplicacionControlador {
 
                 System.out.println("DEBUG Geo JSON: " + geoJson);
 
+                // Comprobar si la ciudad existe. (El .contain sirve como un boolean para una cadena de texto)
                 if (!geoJson.contains("\"results\":[")) {
                     actualizarUI("Ciudad no encontrada", "--", "--", "--");
                     return;
                 }
 
-                // Esto sirve para extraer los datos de geolocalización
+                // Llama al metodo extraerDato de la clase ServicioClima
                 double lat = servicioClima.extraerDato(geoJson, "\"latitude\":");
                 double lon = servicioClima.extraerDato(geoJson, "\"longitude\":");
 
@@ -81,15 +83,16 @@ public class AplicacionControlador {
         });
     }
 
-    //Como su nombre indica con este metodo se crea un objeto tipo URI que envia una solicitud
-    //a la URL y actua como un getter de toda el texto que aparece.
-    // Por eso el metodo tipo String
+    // URI.create(url) este metodo crea un objeto tipo URI valido para JABA.
+    //
+    //La URL y actua como un getter de toda el texto que aparece.
+    //Por eso el metodo tipo String
     private String enviarConsulta(String url) throws Exception {
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
         return client.send(request, HttpResponse.BodyHandlers.ofString()).body();
     }
-    //El .send actua como cartero (request)
-    // HttpResponse.BodyHandlers.ofString() toma todo el contenido de la pagina y lo comvertirá en String
+    //El ".send" actua como cartero (request)
+    // "HttpResponse.BodyHandlers.ofString()" toma todo el contenido de la pagina y lo comvertirá en String
 
     private void actualizarUI(String desc, String temp, String hum, String vnt) {
         javafx.application.Platform.runLater(() -> {
