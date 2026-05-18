@@ -81,10 +81,15 @@ public class AplicacionControlador {
         });
     }
 
+    //Como su nombre indica con este metodo se crea un objeto tipo URI que envia una solicitud
+    //a la URL y actua como un getter de toda el texto que aparece.
+    // Por eso el metodo tipo String
     private String enviarConsulta(String url) throws Exception {
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
         return client.send(request, HttpResponse.BodyHandlers.ofString()).body();
     }
+    //El .send actua como cartero (request)
+    // HttpResponse.BodyHandlers.ofString() toma todo el contenido de la pagina y lo comvertirá en String
 
     private void actualizarUI(String desc, String temp, String hum, String vnt) {
         javafx.application.Platform.runLater(() -> {
