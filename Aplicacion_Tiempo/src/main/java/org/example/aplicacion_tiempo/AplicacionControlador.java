@@ -34,7 +34,6 @@ public class AplicacionControlador {
 
         CompletableFuture.runAsync(() -> {
             try {
-                // Obtener coordenadas
                 String geoUrl = "https://geocoding-api.open-meteo.com/v1/search?name="
                         + ciudad.replace(" ", "%20") + "&count=1&language=es&format=json";
 
@@ -47,7 +46,7 @@ public class AplicacionControlador {
                     return;
                 }
 
-                // 2. Usamos el servicio para extraer los datos de geolocalización
+                // Esto sirve para extraer los datos de geolocalización
                 double lat = servicioClima.extraerDato(geoJson, "\"latitude\":");
                 double lon = servicioClima.extraerDato(geoJson, "\"longitude\":");
 
@@ -58,11 +57,12 @@ public class AplicacionControlador {
                 String weatherJson = enviarConsulta(weatherUrl);
                 System.out.println("DEBUG Weather JSON: " + weatherJson);
 
-                // 3. Usamos el servicio para extraer los datos del clima
+
                 double temp = servicioClima.extraerDato(weatherJson, "\"temperature_2m\":");
                 double hum = servicioClima.extraerDato(weatherJson, "\"relative_humidity_2m\":");
                 double viento = servicioClima.extraerDato(weatherJson, "\"wind_speed_10m\":");
                 int code = (int) servicioClima.extraerDato(weatherJson, "\"weather_code\":");
+                //De aquí sale el codigo CLIMA para poder utilizar correctamente el metodo ACTUALIZAR ICONO
 
                 javafx.application.Platform.runLater(() -> {
                     lblTemp.setText(temp + "°C");
@@ -100,7 +100,6 @@ public class AplicacionControlador {
     private void actualizarIconoClima(int codigoClima) {
         String rutaImagen = "";
 
-        // Mapeo según la documentación oficial de Open-Meteo WMO Code
         switch (codigoClima) {
             case 0: // Cielo despejado
                 rutaImagen = "images/soleado.png";
