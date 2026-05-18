@@ -5,6 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
+<?import javafx.scene.image.ImageView?>
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.aplicacion_tiempo.AplicacionControlador">
    <children>
       <VBox alignment="CENTER" layoutX="142.0" layoutY="69.0" prefHeight="450.0" prefWidth="450.0" spacing="20.0" AnchorPane.bottomAnchor="68.60000000000002" AnchorPane.leftAnchor="142.0" AnchorPane.rightAnchor="142.0" AnchorPane.topAnchor="69.0">
@@ -16,6 +17,7 @@
             </Label>
             <TextField fx:id="txtCiudad" prefHeight="26.0" prefWidth="207.0" promptText="Ingrese el nombre de una ciudad" />
             <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#onConsultarClick" text="Buscar" />
+             <ImageView fx:id="imgClima" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
             <Label fx:id="lblTemp" text="Temperatura">
                <font>
                   <Font name="System Bold Italic" size="12.0" />
