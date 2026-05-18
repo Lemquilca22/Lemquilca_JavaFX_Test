@@ -9,14 +9,15 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
 
-
 public class AplicacionControlador {
     @FXML
     private TextField txtCiudad;
 
     @FXML
     private Label lblTemp, lblDescripcion, lblHumedad, lblViento;
+
     private final java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
+    private final ServicioClima servicioClima = new ServicioClima();
 
     @FXML
     private void onConsultarClick() {
@@ -27,13 +28,12 @@ public class AplicacionControlador {
 
         CompletableFuture.runAsync(() -> {
             try {
-                // 1. Obtener coordenadas
+                // Obtener coordenadas
                 String geoUrl = "https://geocoding-api.open-meteo.com/v1/search?name="
                         + ciudad.replace(" ", "%20") + "&count=1&language=es&format=json";
 
                 String geoJson = enviarConsulta(geoUrl);
 
-                // Imprime en consola los valores de la Api que mandaste
                 System.out.println("DEBUG Geo JSON: " + geoJson);
 
                 if (!geoJson.contains("\"results\":[")) {
@@ -41,8 +41,9 @@ public class AplicacionControlador {
                     return;
                 }
 
-                double lat = extraerDato(geoJson, "\"latitude\":");
-                double lon = extraerDato(geoJson, "\"longitude\":");
+                // 2. Usamos el servicio para extraer los datos de geolocalización
+                double lat = servicioClima.extraerDato(geoJson, "\"latitude\":");
+                double lon = servicioClima.extraerDato(geoJson, "\"longitude\":");
 
                 String weatherUrl = "https://api.open-meteo.com/v1/forecast?latitude=" + lat
                         + "&longitude=" + lon
@@ -51,21 +52,21 @@ public class AplicacionControlador {
                 String weatherJson = enviarConsulta(weatherUrl);
                 System.out.println("DEBUG Weather JSON: " + weatherJson);
 
-                // 3. Extraer datos finales
-                double temp = extraerDato(weatherJson, "\"temperature_2m\":");
-                double hum = extraerDato(weatherJson, "\"relative_humidity_2m\":");
-                double viento = extraerDato(weatherJson, "\"wind_speed_10m\":");
-                int code = (int) extraerDato(weatherJson, "\"weather_code\":");
+                // 3. Usamos el servicio para extraer los datos del clima
+                double temp = servicioClima.extraerDato(weatherJson, "\"temperature_2m\":");
+                double hum = servicioClima.extraerDato(weatherJson, "\"relative_humidity_2m\":");
+                double viento = servicioClima.extraerDato(weatherJson, "\"wind_speed_10m\":");
+                int code = (int) servicioClima.extraerDato(weatherJson, "\"weather_code\":");
 
                 javafx.application.Platform.runLater(() -> {
                     lblTemp.setText(temp + "°C");
                     lblHumedad.setText("Humedad: " + hum + "%");
                     lblViento.setText("Viento: " + viento + " km/h");
-                    lblDescripcion.setText(interpretarClima(code));
+                    // 4. Usamos el servicio para interpretar el código del clima
+                    lblDescripcion.setText(servicioClima.interpretarClima(code));
                 });
 
             } catch (Exception e) {
-                // ESTO TE DIRÁ EL ERROR REAL EN LA CONSOLA ROJA
                 e.printStackTrace();
                 actualizarUI("Error de conexión o datos", "--", "--", "--");
             }
@@ -77,31 +78,6 @@ public class AplicacionControlador {
         return client.send(request, HttpResponse.BodyHandlers.ofString()).body();
     }
 
-    private double extraerDato(String json, String clave) {
-        try {
-            // Busca la ULTIMA aparición de la clave para saltar las unidades
-            // e ir directos a la sección "current" del JSON.
-            int start = json.lastIndexOf(clave) + clave.length();
-
-            // Busca dónde termina el valor (ya sea en una coma o un cierre de llave)
-            int end = json.indexOf(",", start);
-            if (end == -1 || (json.indexOf("}", start) != -1 && json.indexOf("}", start) < end)) {
-                end = json.indexOf("}", start);
-            }
-
-            // Limpia el texto de dos puntos, comillas y espacios para dejar solo el número
-            String valor = json.substring(start, end)
-                    .replace(":", "")
-                    .replace("\"", "")
-                    .trim();
-
-            return Double.parseDouble(valor);
-        } catch (Exception e) {
-            System.err.println("Error procesando la clave: " + clave);
-            throw e;
-        }
-    }
-
     private void actualizarUI(String desc, String temp, String hum, String vnt) {
         javafx.application.Platform.runLater(() -> {
             lblDescripcion.setText(desc);
@@ -111,16 +87,4 @@ public class AplicacionControlador {
         });
     }
 
-    private String interpretarClima(int code) {
-        return switch (code) {
-            case 0 -> "Cielo despejado";
-            case 1, 2, 3 -> "Parcialmente nublado";
-            case 45, 48 -> "Niebla";
-            case 51, 53, 55 -> "Llovizna";
-            case 61, 63, 65 -> "Lluvia";
-            case 71, 73, 75 -> "Nieve";
-            case 95 -> "Tormenta";
-            default -> "Clima desconocido";
-        };
-    }
 }
