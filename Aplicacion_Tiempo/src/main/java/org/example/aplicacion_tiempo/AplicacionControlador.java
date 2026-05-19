@@ -66,7 +66,7 @@ public class AplicacionControlador {
                 int code = (int) servicioClima.extraerDato(weatherJson, "\"weather_code\":");
                 //De aquí sale el codigo CLIMA para poder utilizar correctamente el metodo ACTUALIZAR ICONO
 
-                javafx.application.Platform.runLater(() -> {
+                javafx.application.Platform.runLater(() -> { // Es para que JavaFX no se congele.
                     lblTemp.setText(temp + "°C");
                     lblHumedad.setText("Humedad: " + hum + "%");
                     lblViento.setText("Viento: " + viento + " km/h");
