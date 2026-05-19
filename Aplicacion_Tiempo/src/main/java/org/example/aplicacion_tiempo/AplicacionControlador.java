@@ -70,7 +70,7 @@ public class AplicacionControlador {
                     lblTemp.setText(temp + "°C");
                     lblHumedad.setText("Humedad: " + hum + "%");
                     lblViento.setText("Viento: " + viento + " km/h");
-                    // 4. Usamos el servicio para interpretar el código del clima
+                    // Usamos el servicio para interpretar el código del clima
                     lblDescripcion.setText(servicioClima.interpretarClima(code));
 
                     actualizarIconoClima(code);
@@ -140,7 +140,8 @@ public class AplicacionControlador {
         }
 
         try {
-            InputStream input = getClass().getResourceAsStream(rutaImagen);
+            InputStream input = getClass().getResourceAsStream(rutaImagen); // Esta es la forma correcta en Java de buscar archivos (como imágenes, audios o textos) que están guardados
+            //En la carpeta resources de mi proyecto.
             if (input != null) {
                 Image imagenNueva = new Image(input);
                 imgClima.setImage(imagenNueva);
