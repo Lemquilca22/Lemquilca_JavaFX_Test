@@ -22,6 +22,12 @@ public class AplicacionControlador {
     @FXML
     private ImageView imgClima;
 
+    @FXML
+    private ImageView imgHumedad;
+
+    @FXML
+    private ImageView imgViento;
+
     private final java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
     private final ServicioClima servicioClima = new ServicioClima();
 
@@ -31,7 +37,6 @@ public class AplicacionControlador {
         if (ciudad.isEmpty()) return;
 
         lblDescripcion.setText("Buscando...");
-
 
         CompletableFuture.runAsync(() -> { //Esto sirve para que toda la logica de decision se procese sin afectar la interfaz gráfica
             try {
@@ -59,7 +64,6 @@ public class AplicacionControlador {
                 String weatherJson = enviarConsulta(weatherUrl);
                 System.out.println("DEBUG Weather JSON: " + weatherJson);
 
-
                 double temp = servicioClima.extraerDato(weatherJson, "\"temperature_2m\":");
                 double hum = servicioClima.extraerDato(weatherJson, "\"relative_humidity_2m\":");
                 double viento = servicioClima.extraerDato(weatherJson, "\"wind_speed_10m\":");
@@ -70,10 +74,13 @@ public class AplicacionControlador {
                     lblTemp.setText(temp + "°C");
                     lblHumedad.setText("Humedad: " + hum + "%");
                     lblViento.setText("Viento: " + viento + " km/h");
-                    // Usamos el servicio para interpretar el código del clima
+                    //Usamos el servicio para interpretar el código del clima
                     lblDescripcion.setText(servicioClima.interpretarClima(code));
 
                     actualizarIconoClima(code);
+
+                    // CARGAR ICONOS POR DEFAULT DESPUÉS DE LA CONSULTA EXITOSA
+                    cargarIconosDetalle();
                 });
 
             } catch (Exception e) {
@@ -102,6 +109,10 @@ public class AplicacionControlador {
             lblViento.setText(vnt);
             // Si hay error, podemos limpiar la imagen o poner una por defecto
             actualizarIconoClima(-1);
+
+            // Si hay un error o limpia la pantalla, quitamos los iconos de detalle
+            imgHumedad.setImage(null);
+            imgViento.setImage(null);
         });
     }
 
@@ -150,6 +161,23 @@ public class AplicacionControlador {
             }
         } catch (Exception e) {
             System.err.println("Error al cargar la imagen: " + e.getMessage());
+        }
+    }
+
+    // Método auxiliar para cargar de forma segura las imágenes por defecto de humedad y viento
+    private void cargarIconosDetalle() {
+        try {
+            InputStream streamHumedad = getClass().getResourceAsStream("images/humedad.png");
+            InputStream streamViento = getClass().getResourceAsStream("images/viento.png");
+
+            if (streamHumedad != null) {
+                imgHumedad.setImage(new Image(streamHumedad));
+            }
+            if (streamViento != null) {
+                imgViento.setImage(new Image(streamViento));
+            }
+        } catch (Exception e) {
+            System.err.println("Error al cargar los iconos de detalle: " + e.getMessage());
         }
     }
 }
